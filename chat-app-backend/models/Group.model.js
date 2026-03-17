@@ -5,10 +5,10 @@ const groupSchema = new mongoose.Schema({
         type:String,
         default:"Global Chat"
     },
-    members:{
+    members:[{
         type: mongoose.Schema.Types.ObjectId,
         ref:"User"
-    }
+    }]
 },{timestamps:true})
 
 export const Group =mongoose.model("Group",groupSchema)
