@@ -74,6 +74,18 @@ export const login = asyncHandler(async (req,res) => {
         throw new ApiError(401,"Invalid Password")
   
     }
+    const token = user.generateAccessToken();
 
+    const options = {
+        httpOnly:true,
+        secure:true
+    }
+      const loggedInUser = await User.findById(user._id).select("-password");
+
+      return res
+      .status(200)
+      .json(
+        new ApiResponse(200,loggedInUser,"User Logged In Succesfully")
+      )
 
 })
