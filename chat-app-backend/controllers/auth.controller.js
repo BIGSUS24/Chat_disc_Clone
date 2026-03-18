@@ -56,6 +56,24 @@ export const login = asyncHandler(async (req,res) => {
          throw new ApiError(400,"Fill All the Fields these are required")
         
     }
-    
-    
+    const user = await User.findOne({
+        email
+    });
+     
+    if (!user) {
+        throw new ApiError(404,"User Not found")
+        
+    }
+
+    //validation of passowrd method in models
+
+
+    const isPasswordValid = await user.isPasswordCorrect(password);
+
+    if (!isPasswordValid) {
+        throw new ApiError(401,"Invalid Password")
+  
+    }
+
+
 })
