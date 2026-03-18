@@ -9,7 +9,7 @@ export const signup = asyncHandler(async (req,res) => {
     const {username,password,email} = req.body;
     
     // validation basic
-    if ([!username,!email,!password].some((field)=>field?.trim() === "")) {
+    if ([username,email,password].some((field)=>field?.trim() === "")) {
         throw new ApiError(400,"Fill All the Fields these are required")
     
     }
