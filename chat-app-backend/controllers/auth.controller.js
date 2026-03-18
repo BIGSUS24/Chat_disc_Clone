@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import {asyncHandler} from "../utils/asyncHandler.js";
 import {ApiResponse} from "../utils/ApiResponce.js";
+import {ApiError} from "../utils/ApiError.js"
 
 export const signup = asyncHandler(async (req,res) => {
     const {username,password,email} = req.body;

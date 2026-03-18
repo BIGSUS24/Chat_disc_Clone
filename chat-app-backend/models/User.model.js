@@ -18,6 +18,8 @@ const userSchema =new mongoose.Schema({
         
     }
 
-},{timestamps:true})
+},{timestamps:true});
+
+userSchema.pre
 
 export const User = mongoose.model("User",userSchema)
