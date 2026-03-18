@@ -47,3 +47,15 @@ export const signup = asyncHandler(async (req,res) => {
 
     
 });
+
+export const login = asyncHandler(async (req,res) => {
+
+    const {email,password} = req.body;
+
+    if (!email || !password) {
+         throw new ApiError(400,"Fill All the Fields these are required")
+        
+    }
+    
+    
+})
