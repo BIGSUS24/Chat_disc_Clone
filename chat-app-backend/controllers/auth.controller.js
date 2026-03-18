@@ -20,9 +20,30 @@ export const signup = asyncHandler(async (req,res) => {
 
     })
     if (existedUser){
-        throw new ApiError(409,"User already Exists Use Another Account")
+        throw new ApiError(409,
+            "User already Exists Use Another Account")
     }
+
+    const user = await User.create({
+        username:username.toLowerCase(),
+        password,
+        email
+    });
+
+    const createdUser =
+     await User.findById(user._id).select("-password");
+
+     if (!createdUser) {
+         throw new ApiError(500,"registration failed Try again")
+        
+     };
+
+     return res
+     .status(201)
+     .json(
+        new ApiResponse(200,createdUser,"User Registered Succesfully")
+     );
     
 
     
-})
+});
