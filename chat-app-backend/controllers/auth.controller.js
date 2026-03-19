@@ -91,3 +91,29 @@ export const login = asyncHandler(async (req,res) => {
       )
 
 })
+
+export const getMe = asyncHandler(async (req, res) => {
+    return res.status(200).json(
+        new ApiResponse(200, req.user, "User details fetched successfully")
+    );
+});
+
+export const searchUser = asyncHandler(async (req,res) => {
+
+    const { username } = req.query;
+
+    if (!username) {
+
+        throw new ApiError(400,"Username Not Found or its Wrong")
+        
+    }
+
+    const users = await User.find({
+        username:{$regex:username,$options:"i"},
+        _id:{$ne:req.user._id}
+    }).select("-password")
+
+    return res.status(200).json(
+        new ApiResponse(200,users,"Users fetched successfully")
+    )
+})
