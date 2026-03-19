@@ -85,7 +85,7 @@ export const login = asyncHandler(async (req,res) => {
 
       return res
       .status(200)
-      .cookie("accessToken",token,options)
+      .cookie("token",token,options)
       .json(
         new ApiResponse(200, { user: loggedInUser, token }, "User Logged In Succesfully")
       )
