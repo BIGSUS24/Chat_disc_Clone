@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import {asyncHandler} from "../utils/asyncHandler.js";
 import {ApiResponse} from "../utils/ApiResponce.js";
 import {ApiError} from "../utils/ApiError.js"
+import cookieParser from "cookie-parser";
 
 export const signup = asyncHandler(async (req,res) => {
     const {username,password,email} = req.body;
@@ -84,8 +85,9 @@ export const login = asyncHandler(async (req,res) => {
 
       return res
       .status(200)
+      .cookie("accessToken",token,options)
       .json(
-        new ApiResponse(200,loggedInUser,"User Logged In Succesfully")
+        new ApiResponse(200, { user: loggedInUser, token }, "User Logged In Succesfully")
       )
 
 })
