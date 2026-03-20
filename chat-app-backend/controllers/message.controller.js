@@ -4,6 +4,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponce.js";
 import {User} from "../models/user.model.js";
 import {Group} from "../models/group.model.js";
+import { io , getReceiverSocketId } from "../socket/socket.js";
 
 export const sendMessage = asyncHandler(async (req,res) => {
 
@@ -20,6 +21,23 @@ export const sendMessage = asyncHandler(async (req,res) => {
         groupId,
         text
     })
+
+    const group = await Group.findById(groupId);
+
+    // 3. The "Walkie-Talkie" Step (Real-time)
+    // First, we find the Group to see who is in it
+
+    if (group) {
+        // We tell every member in the group about the new message!
+        group.members.forEach((memberId) => {
+            // Find if this member is currently online (check their socket ID)
+            const receiverSocketId = getReceiverSocketId(memberId);
+            if (receiverSocketId) {
+                // SHOUT the message to them!
+                io.to(receiverSocketId).emit("newMessage", message);
+            }
+        });
+    }
 
     return res
     .status(201)

@@ -5,7 +5,8 @@ import dotenv from "dotenv"
 import cookieParser from "cookie-parser";
 import authRoutes from "./routes/auth.routes.js";
 import groupRoutes from "./routes/group.routes.js";
-import messageRoutes from "./routes/message.routes.js"
+import messageRoutes from "./routes/message.routes.js";
+import {app , server } from "./socket/socket.js";
 
 
 dotenv.config();
@@ -22,7 +23,7 @@ app.get("/",(req,res)=>{
 })
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
