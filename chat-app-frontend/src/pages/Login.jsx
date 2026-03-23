@@ -28,9 +28,9 @@ const Login =()=>{
         }
         
     }
-    return
+    return(
     <div>
-        <h2>Welcome to Obsidian</h2>
+        <h2>Welcome</h2>
         {error && <p style={{color:"red"}}>{error}</p>}
 
         <form onSubmit={handleLogin}>
@@ -53,6 +53,7 @@ const Login =()=>{
         </p>
       
     </div>
+    )
 }
 
 export default Login;
