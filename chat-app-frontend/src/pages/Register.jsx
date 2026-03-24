@@ -3,6 +3,7 @@ import { useContext, useState } from "react";
 import { useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
 import {useNavigate} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Register= () =>{
     const [username,setUsername] = useState("");
@@ -22,13 +23,13 @@ const Register= () =>{
 
         try {
 
-            const res =  await axios.post("https//localhost:5000/api/v1/signup"),{
+            const res =  await axios.post("http://localhost:5000/api/v1/auth/signup",{
                 username,
                 email,
                 password
-            }
+            });
             if (res.data.success) {
-                setUser(res.data.user);
+                setUser(res.data.data);
                 navigate("/");
             }
             
@@ -43,10 +44,34 @@ const Register= () =>{
     return (
         <div>
             <h2>Create An Account</h2>
-            {error &&}
+            {error && <p style={{color:"red"}}>{error}</p>}
+
+            <form onSubmit={handleRegister}>
+                <input type="text"
+                placeholder="Username"
+                value={username}
+                onChange={(e)=> setUsername(e.target.value) }
+                required/>
+
+                <input type="email" 
+                placeholder="Email"
+                value={email}
+                onChange={(e)=>setEmail(e.target.value)}
+                required/>
+
+                <input type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e)=>setPassword(e.target.value)} 
+                required/>
+
+                <button type="submit">Register</button>
+            </form>
+            <p>Already have an account? <Link to="/login">Login</Link></p>
         </div>
     )
 
 
 
 }
+export default Register;
