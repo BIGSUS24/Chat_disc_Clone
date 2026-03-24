@@ -10,7 +10,7 @@ const server = http.createServer(app);
 // We attach Socket.IO to that server
 const io = new Server(server, {
     cors: {
-        origin: "*", // We will link this to your React frontend URL later
+        origin: "http://localhost:5173", // We will link this to your React frontend URL later
         methods: ["GET", "POST"]
     }
 });
@@ -18,10 +18,10 @@ const io = new Server(server, {
 // A Map to store which user is hooked to which socket connection
 // Think of it like a phonebook: { "userId_123": "socketId_456" }
 export const getReceiverSocketId = (receiverId) => {
-	    return userSocketMap[receiverId];
+    return userSocketMap[receiverId];
 };
 
-const userSocketMap = {}; 
+const userSocketMap = {};
 
 io.on("connection", (socket) => {
     console.log("A user connected", socket.id);
@@ -39,7 +39,7 @@ io.on("connection", (socket) => {
     socket.on("disconnect", () => {
         console.log("User disconnected", socket.id);
         delete userSocketMap[userId];
-        
+
         // Update everyone about who is online now
         io.emit("getOnlineUsers", Object.keys(userSocketMap));
     });

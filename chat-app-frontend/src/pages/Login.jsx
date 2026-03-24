@@ -4,7 +4,7 @@ import { AuthContext } from "../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 
 const Login = () => {
-    const [username, setUsername] = useState("");
+    const [email, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
 
@@ -19,7 +19,7 @@ const Login = () => {
 
             const res = await axios.post("http://localhost:5000/api/v1/auth/login",
                 {
-                    username,
+                    email,
                     password
                 });
 
@@ -42,7 +42,7 @@ const Login = () => {
             <form onSubmit={handleLogin}>
                 <input type="text"
                     placeholder="Username"
-                    value={username}
+                    value={email}
                     onChange={(e) => setUsername(e.target.value)}
                     required
                 />
