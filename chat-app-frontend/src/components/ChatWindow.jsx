@@ -1,103 +1,68 @@
-import { useContext, useState } from "react"
-import axios from "axios"
-import { AuthContext } from "../context/AuthContext"
-import { SocketContext, SocketContext } from "../context/SocketContext"
-import { useEffect } from "react"
-const ChatWindow = () =>{
+// src/components/ChatWindow.jsx
+import { useState, useEffect, useContext } from "react";
+import axios from "axios";
+import { AuthContext } from "../context/AuthContext";
+import { SocketContext } from "../context/SocketContext";
 
-    const {user} = useContext(AuthContext)
-    const {SocketContext}= useContext(SocketContext)
+const ChatWindow = ({ selectedGroup }) => {
+    const { user } = useContext(AuthContext);
+    const { socket } = useContext(SocketContext); // <-- Fixed (was grabbing SocketContext instead of socket)
+    
+    const [messages, setMessages] = useState([]);
+    const [text, setText] = useState("");
 
-    const[messages,setMessages]= useState([]);
-    const [text,setText] = useState("");
+    // 1. Fetch history when chat is clicked
+    useEffect(() => {
+        if (!selectedGroup) return; // <-- Fixed (lowercase 's')
 
-    //fetch chat back
-
-    useEffect(()=>{
-        if (!SelectedGroup) {
-            return;
-            
-        }
         const fetchMessages = async () => {
+             try {
+                 const res = await axios.get(`http://localhost:5000/api/v1/messages/${selectedGroup._id}`);
+                 if (res.data.success) {
+                     setMessages(res.data.data);
+                 }
+             } catch (error) {
+                 console.error("Failed to fetch messages", error);
+             }
+        };
+        fetchMessages(); // <-- Fixed (Moved outside the function definition so it actually runs once!)
+    }, [selectedGroup]);
 
-            try {
-                const res = await 
-                axios.get(`http://localhost:5000/api/v1/messages/${selectedGroup._id}`);
-                if (res.data.success) {
+    // 2. Listen for Live Messages
+    useEffect(() => {
+        if (!socket) return;
 
-                    setMessages(res.data.data)
-                    
-                }
-            } catch (error) {
-
-                console.error("failed to fetch messages",error)
-                
-            }
-            fetchMessages();
-            
-        }
-    },[SelectedGroup]);
-
-
-    //socket for live messages
-
-    useEffect(()=>{
-        if (!socket) {
-            
-            return;
-            
-        }
-        socket.on("newMessage",(newMsg)=>{
-
-
+        socket.on("newMessage", (newMsg) => {
             if (selectedGroup && selectedGroup._id === newMsg.conversationId) { 
                  setMessages((prev) => [...prev, newMsg]);
             }
-
-
         });
 
-        return()=> socket.off("newMessages")
-    },[socket,selectedGroup])
+        return () => socket.off("newMessage"); // <-- Fixed (Singular "newMessage")
+    }, [socket, selectedGroup]);
 
-
-    //send messages
-
+    // 3. Send Message
     const handleSend = async (e) => {
-        
         e.preventDefault();
-        if (!text.trim()||!selectedGroup) {
-        
-                return
-
-            
-        }
+        if (!text.trim() || !selectedGroup) return;
 
         try {
-           
-                const res = await axios.post(`http://localhost:5000/api/v1/messages/${selectedGroup._id}`, { text });
-
-                if (res.data.success) {
-                    setMessages((prev) => [...prev, res.data.data]);
-                    setText(""); 
-                    
-                }
-        } catch (error) {
-
-            console.error("Failed TO send Msg",error)
+            const res = await axios.post(`http://localhost:5000/api/v1/messages/${selectedGroup._id}`, { text });
             
+            if (res.data.success) {
+                setMessages((prev) => [...prev, res.data.data]);
+                setText(""); 
+            }
+        } catch (error) {
+            console.error("Failed to send", error);
         }
-        
-    }
+    };
 
-    if (!selectedGroup) {
+    // If no chat selected:
+    if (!selectedGroup) return <div>Pick a chat to start messaging!</div>;
 
-        return <div>Pick A group Chat to Start</div>;
-        
-    }
-
-
-      return (
+    // The raw structure:
+    return (
         <div>
             {/* Header */}
             <h2>Chat: {selectedGroup.name}</h2>
@@ -111,6 +76,7 @@ const ChatWindow = () =>{
                     </div>
                 ))}
             </div>
+
             {/* Input Box */}
             <form onSubmit={handleSend}>
                 <input 
@@ -124,5 +90,4 @@ const ChatWindow = () =>{
     );
 };
 
-
-export default ChatWindow
+export default ChatWindow;
